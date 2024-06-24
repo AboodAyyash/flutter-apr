@@ -75,6 +75,12 @@ class _MyHomePageState extends State<MyHomePage> {
   price
   name
    */
+
+  String num1 = "";
+  String num2 = "";
+  String total = "";
+  String op = '';
+
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
@@ -112,168 +118,136 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView(
         // reverse: true,
         children: [
-          GridView.builder(
-              shrinkWrap: true,
-              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 1.5,
-              ),
-              itemCount: products.length,
-              itemBuilder: (context, index) {
-                bool isNetwork =
-                    products[index]['img'].toString().contains("http");
-                print(isNetwork);
-                return InkWell(
-                  onTap: () {
-                    print(products[index]['img']);
-                  },
-                  child: Column(
-                    children: [
-                      if (isNetwork)
-                        Image.network(
-                          products[index]['img'],
-                          width: 100,
-                        )
-                      else
-                        Image.asset(
-                          products[index]['img'],
-                          width: 100,
-                        ),
-                      Text("${products[index]['price']} \$"),
-                      Text(products[index]['name'])
-                    ],
-                  ),
-                );
-              }),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: photos.length,
-            itemBuilder: (context, index) {
-              bool isNetwork = photos[index].toString().contains("http");
-              print(isNetwork);
-              if (isNetwork)
-                return Image.network(photos[index]);
-              else
-                return Image.asset(photos[index]);
-            },
-          ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: photos.length,
-            itemBuilder: (context, index) {
-              bool isNetwork = photos[index].toString().contains("http");
-              print(isNetwork);
-              if (isNetwork)
-                return Image.network(photos[index]);
-              else
-                return Image.asset(photos[index]);
-            },
-          ),
-          for (int i = 0; i < 5; i++)
-            i < 3
-                ? Image.asset(
-                    'assets/photo.jpg',
-                    fit: BoxFit.cover,
-                  )
-                : i == 3
-                    ? Image.asset(
-                        'assets/photo.jpg',
-                        fit: BoxFit.cover,
-                      )
-                    : Image.asset(
-                        'assets/photo.jpg',
-                        fit: BoxFit.cover,
-                      ),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                Image.network(
-                  "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
-                ),
-                Image.network(
-                  "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
-                ),
-              ],
+          Text(
+            total == '' ? "$num1 $op $num2" : "$num1 $op $num2 = $total",
+            style: TextStyle(
+              fontSize: 40,
             ),
-          ),
-          Container(
-            height: 500,
-            child: ListView(
-              shrinkWrap: true,
-              physics: NeverScrollableScrollPhysics(),
-              children: [
-                Image.network(
-                  "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
-                ),
-                Image.network(
-                  "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
-                ),
-                Image.network(
-                  "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
-                ),
-                Image.network(
-                  "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
-                ),
-                Image.network(
-                  "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
-                ),
-                Image.network(
-                  "https://www.simplilearn.com/ice9/free_resources_article_thumb/what_is_image_Processing.jpg",
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 10,
           ),
           GridView.count(
-            //   padding: EdgeInsets.symmetric(vertical: 10),
+            crossAxisCount: 4,
+            mainAxisSpacing: 1,
+            crossAxisSpacing: 2,
+            children: [
+              for (int i = 0; i < 10; i++) numbersButton(i),
+              opButton('*'),
+              opButton('/'),
+              opButton('-'),
+              opButton('+'),
+              twoButtons('C', Colors.amber),
+              twoButtons('=', Colors.green),
+            ],
             shrinkWrap: true,
-            crossAxisCount: screenWidth <= 600 ? 2 : 3,
-
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            children: List.generate(10, (index) {
-              print(index);
-              return Image.asset(
-                'assets/photo.jpg',
-                fit: BoxFit.cover,
-              );
-            }),
-          ),
-          SizedBox(
-            height: 10,
-          ),
-          Wrap(
-            alignment: WrapAlignment.center,
-            children: List.generate(10, (index) {
-              print(index);
-              return Image.asset(
-                'assets/photo.jpg',
-                fit: BoxFit.cover,
-                width: 70,
-              );
-            }),
-          ),
-          Image.network(
-            "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
-          ),
-          Image.asset(
-            'assets/photo.jpg',
-            fit: BoxFit.cover,
-          ),
-          Image.network(
-            "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
-          ),
-          Image.asset(
-            'assets/photo.jpg',
-            fit: BoxFit.cover,
-          ),
-          Image.network(
-            "https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg",
+            physics: NeverScrollableScrollPhysics(),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget numbersButton(int num) {
+    return InkWell(
+      onTap: () {
+        print(num);
+        if (total != '') {
+          setState(() {
+            total = "";
+            num1 = '';
+            num2 = '';
+            op = '';
+          });
+        }
+        if (op == "")
+          setState(() {
+            num1 += num.toString();
+          });
+        else
+          setState(() {
+            num2 += num.toString();
+          });
+      },
+      child: Container(
+        alignment: Alignment.center,
+        color: Colors.red,
+        child: Text(
+          "$num",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget opButton(String op) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          this.op = op;
+        });
+      },
+      child: Container(
+        alignment: Alignment.center,
+        color: Colors.blue,
+        child: Text(
+          "$op",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget twoButtons(String button, Color color) {
+    return InkWell(
+      onTap: () {
+        print(button);
+        if (button == "=") {
+          if (op == "+") {
+            setState(() {
+              total = (int.parse(num1) + int.parse(num2)).toString();
+            });
+          }
+          if (op == "-") {
+            setState(() {
+              total = (int.parse(num1) - int.parse(num2)).toString();
+            });
+          }
+          if (op == "*") {
+            setState(() {
+              total = (int.parse(num1) * int.parse(num2)).toString();
+            });
+          }
+          if (op == "/") {
+            setState(() {
+              total = (int.parse(num1) / int.parse(num2)).toString();
+            });
+          }
+        } else {
+          setState(() {
+            total = "";
+            num1 = '';
+            num2 = '';
+            op = '';
+          });
+        }
+      },
+      child: Container(
+        alignment: Alignment.center,
+        color: color,
+        child: Text(
+          "$button",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
       ),
     );
   }
