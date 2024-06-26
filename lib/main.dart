@@ -1,3 +1,5 @@
+import 'dart:html';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -18,6 +20,9 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         appBarTheme: AppBarTheme(),
         useMaterial3: true,
+        inputDecorationTheme: InputDecorationTheme(
+          hintStyle: TextStyle(color: Colors.amber),
+        ),
       ),
       home: const MyHomePage(),
     );
@@ -81,6 +86,15 @@ class _MyHomePageState extends State<MyHomePage> {
   String total = "";
   String op = '';
 
+  String name = "";
+  TextEditingController textEditingController = TextEditingController();
+  TextEditingController textEditingController2 = TextEditingController();
+
+  bool showWelcome = false;
+
+  final formKey = GlobalKey<FormState>();
+  bool checkBoxValue = false;
+  String radioValue = '0';
   @override
   Widget build(BuildContext context) {
     screenWidth = MediaQuery.of(context).size.width;
@@ -118,6 +132,239 @@ class _MyHomePageState extends State<MyHomePage> {
       body: ListView(
         // reverse: true,
         children: [
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
+              keyboardType: TextInputType.text,
+              controller: textEditingController,
+              onChanged: (value) {
+                print("C V $value");
+                print("C C ${textEditingController.text}");
+              },
+              onSubmitted: (value) {
+                print("S V $value");
+                print("S C ${textEditingController.text}");
+              },
+              onTap: () {
+                print("T C ${textEditingController.text}");
+              },
+              onEditingComplete: () {
+                print("E C ${textEditingController.text}");
+              },
+              style: TextStyle(color: Colors.green),
+              decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                hintText: "Hint",
+                labelText: "First Name",
+                labelStyle: TextStyle(fontSize: 20, color: Colors.blue),
+                //  hintStyle: TextStyle(fontSize: 20, color: Colors.red),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          Container(
+            margin: EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
+              keyboardType: TextInputType.text,
+              obscureText: true,
+              controller: textEditingController2,
+              onChanged: (value) {
+                print("C V $value");
+                print("C C ${textEditingController2.text}");
+              },
+              onSubmitted: (value) {
+                print("S V $value");
+                print("S C ${textEditingController2.text}");
+              },
+              onTap: () {
+                print("T C ${textEditingController2.text}");
+              },
+              onEditingComplete: () {
+                print("E C ${textEditingController2.text}");
+              },
+              style: TextStyle(color: Colors.green),
+              decoration: InputDecoration(
+                contentPadding:
+                    EdgeInsets.symmetric(vertical: 10.0, horizontal: 15.0),
+                hintText: "Hint",
+                labelText: "Password",
+                labelStyle: TextStyle(fontSize: 20, color: Colors.blue),
+                //  hintStyle: TextStyle(fontSize: 20, color: Colors.red),
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          TextButton(
+            onPressed: () {
+              if (textEditingController.text.isNotEmpty &&
+                  textEditingController2.text.isNotEmpty) {
+                setState(() {
+                  showWelcome = true;
+                });
+              }
+            },
+            child: Text("Login"),
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          showWelcome
+              ? Text(
+                  "Welcome ${textEditingController.text} ${textEditingController2.text}",
+                  style: TextStyle(
+                    fontSize: 40,
+                  ),
+                )
+              : Container(),
+          SizedBox(
+            height: 20,
+          ),
+          Form(
+            key: formKey,
+            child: Column(
+              children: [
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    onChanged: (value) {},
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return "Please Add Name";
+                      }
+                      return null;
+                    },
+                    style: TextStyle(color: Colors.green),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 15.0),
+                      hintText: "Hint",
+                      labelText: "Name",
+                      labelStyle: TextStyle(fontSize: 20, color: Colors.blue),
+                      //  hintStyle: TextStyle(fontSize: 20, color: Colors.red),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    onChanged: (value) {},
+                    validator: (value) {
+                      if (value!.length < 6) {
+                        return "Please Add Full Password";
+                      }
+                      if (value.contains("@")) {
+                        return null;
+                      } else {
+                        return "Please Add @ in your Password";
+                      }
+                    },
+                    style: TextStyle(color: Colors.green),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 15.0),
+                      hintText: "Hint",
+                      labelText: "Password",
+                      labelStyle: TextStyle(fontSize: 20, color: Colors.blue),
+                      //  hintStyle: TextStyle(fontSize: 20, color: Colors.red),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(horizontal: 20),
+                  child: TextFormField(
+                    onChanged: (value) {},
+                    validator: (value) {
+                      if (value!.length < 6) {
+                        return "Please Add Full Email";
+                      }
+                      if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                          .hasMatch(value)) {
+                        return "Please Add Full Email";
+                      }
+                      return null;
+                    },
+                    style: TextStyle(color: Colors.green),
+                    decoration: InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(
+                          vertical: 10.0, horizontal: 15.0),
+                      hintText: "Hint",
+                      labelText: "Email",
+                      labelStyle: TextStyle(fontSize: 20, color: Colors.blue),
+                      //  hintStyle: TextStyle(fontSize: 20, color: Colors.red),
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                CheckboxListTile(
+                  value: checkBoxValue,
+                  onChanged: (value) {
+                    print(value);
+                    setState(() {
+                      checkBoxValue = value!;
+                    });
+                  },
+                  title: Text("I Agree Terms & Conditions"),
+                ),
+                RadioListTile(
+                  groupValue: radioValue,
+                  value: '1',
+                  title: Text("1"),
+                  onChanged: (value) {
+                    print(value);
+                    setState(() {
+                      radioValue = value!;
+                    });
+                  },
+                ),
+                RadioListTile(
+                  groupValue: radioValue,
+                  value: '2',
+                  title: Text("2"),
+                  onChanged: (value) {
+                    print(value);
+                    setState(() {
+                      radioValue = value!;
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (formKey.currentState!.validate() && checkBoxValue) {
+                      print("Done");
+                    }
+                  },
+                  child: Text("Submet"),
+                ),
+              ],
+            ),
+          ),
+          SizedBox(
+            height: 20,
+          ),
           Text(
             total == '' ? "$num1 $op $num2" : "$num1 $op $num2 = $total",
             style: TextStyle(
