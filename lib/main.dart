@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_apr/pages/calculator.dart';
+import 'package:flutter_app_apr2/page/numbers.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const CalculatorPage(),
+      home: const NumberPage(),
     );
   }
 }
