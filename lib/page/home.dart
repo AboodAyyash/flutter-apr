@@ -1,9 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app_apr2/models/note.dart';
-import 'package:flutter_app_apr2/page/editor.dart';
-import 'package:flutter_app_apr2/widgets/custom-icon-button.dart';
+import 'package:flutter_apr/DB/note.dart';
+import 'package:flutter_apr/controllers/note.dart';
+import 'package:flutter_apr/models/note.dart';
+import 'package:flutter_apr/page/editor.dart';
+import 'package:flutter_apr/shared/note.dart';
+import 'package:flutter_apr/widgets/custom-icon-button.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -13,12 +16,28 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Note> notes = [];
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getAllNotes();
+  }
+
+  getAllNotes() async {
+    await DataBaseNotes().initDatabase();
+    DataBaseNotes().getAllNotes().then((value) {
+      print(value);
+      setState(() {
+        notes = value;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(
+        title: const Text(
           "Notes",
           style: TextStyle(
             fontSize: 45,
@@ -28,7 +47,7 @@ class _HomePageState extends State<HomePage> {
           customIconButton(icon: Icons.search),
         ],
       ),
-      body: /*  notes.isEmpty
+      body: notes.isEmpty
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
@@ -37,64 +56,98 @@ class _HomePageState extends State<HomePage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Image.asset(
-                      'assets/photo.jpg',
+                      'images/note.png',
                       height: 150,
                     ),
                   ],
                 ),
-                SizedBox(
+                const SizedBox(
                   height: 10,
                 ),
-                Text("Create your first note !"),
+                const Text("Create your first note !"),
               ],
             )
-          : */
-          ListView(
-        children: [
-          SizedBox(
-            height: 30,
-          ),
-          for (int i = 0; i < notes.length; i++)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+          : ListView(
               children: [
-                Container(
-                  width: MediaQuery.of(context).size.width - 50,
-                  margin: EdgeInsets.symmetric(vertical: 10),
-                  padding: EdgeInsets.all(10),
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10),
-                    color: randomColors(),
-                  ),
-                  child: Text(
-                    notes[i].title,
-                    style: const TextStyle(
-                      fontSize: 25,
-                    ),
-                  ),
+                const SizedBox(
+                  height: 30,
                 ),
+                for (int i = 0; i < notes.length; i++)
+                  if (notes[i].title.isNotEmpty)
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        InkWell(
+                          onTap: () async {
+                            var r = await Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => EditorPage(
+                                      title: notes[i].title,
+                                      body: notes[i].body)),
+                            );
+
+                            await updateNoteData(i, r);
+                            setState(() {});
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width - 50,
+                            margin: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.all(10),
+                            alignment: Alignment.center,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              color: randomColors(),
+                            ),
+                            child: Container(
+                              child: Text(
+                                notes[i].title,
+                                style: const TextStyle(
+                                  fontSize: 25,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        InkWell(
+                          mouseCursor: SystemMouseCursors.click,
+                          onTap: () async {
+                            await deleteNote(i);
+                            setState(() {});
+                          },
+                          child: Container(
+                            decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5)),
+                            child: const Icon(
+                              Icons.delete,
+                              size: 35,
+                            ),
+                          ),
+                        )
+                      ],
+                    )
               ],
-            )
-        ],
-      ),
+            ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           var result = await Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (BuildContext context) => const EditorPage(),
+              builder: (BuildContext context) => const EditorPage(
+                title: '',
+                body: '',
+              ),
             ),
           );
           print("result = $result");
-          notes.add(result);
+          addNote(result);
           setState(() {});
         },
         child: Icon(
           Icons.add,
           size: 40,
         ),
-        shape: CircleBorder(),
+        shape: const CircleBorder(),
       ),
     );
   }

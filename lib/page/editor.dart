@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_app_apr2/models/note.dart';
-import 'package:flutter_app_apr2/widgets/custom-icon-button.dart';
+import 'package:flutter_apr/models/note.dart';
+import 'package:flutter_apr/widgets/custom-icon-button.dart';
 
 class EditorPage extends StatefulWidget {
-  const EditorPage({super.key});
+  final String title;
+  final String body;
+  const EditorPage({super.key, required this.title, required this.body});
 
   @override
   State<EditorPage> createState() => _EditorPageState();
@@ -11,13 +13,24 @@ class EditorPage extends StatefulWidget {
 
 class _EditorPageState extends State<EditorPage> {
   Map note = {'title': "", 'body': ""};
+
+  @override
+  void initState() {
+    super.initState();
+    note['title'] = widget.title;
+    note['body'] = widget.body;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         leading: customIconButton(
-          icon: Icons.arrow_back_ios,
-        ),
+            icon: Icons.arrow_back_ios,
+            onPressed: () {
+              Note modelNoteBack = Note(title: widget.title, body: widget.body);
+              Navigator.pop(context, modelNoteBack);
+            }),
         actions: [
           customIconButton(
               icon: Icons.save,
@@ -31,6 +44,7 @@ class _EditorPageState extends State<EditorPage> {
       body: ListView(
         children: [
           TextField(
+            controller: TextEditingController(text: note['title']),
             style: const TextStyle(
               fontSize: 48,
             ),
@@ -40,13 +54,14 @@ class _EditorPageState extends State<EditorPage> {
                 fontSize: 48,
               ),
             ),
-            minLines: 5,
-            maxLines: 5,
+            minLines: 1,
+            maxLines: 1,
             onChanged: (value) {
               note['title'] = value;
             },
           ),
           TextField(
+            controller: TextEditingController(text: note['body']),
             style: const TextStyle(
               fontSize: 23,
             ),
